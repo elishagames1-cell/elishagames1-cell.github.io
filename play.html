@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Elisha Games</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700&family=Sora:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0e1016;--surface:#141722;--line:#262c3a;--text:#eef0f6;--muted:#8f95a8;--accent:#4f8cff}
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font-family:Inter,system-ui,"Segoe UI",Arial,sans-serif}
+  body{display:flex;flex-direction:column;overflow:hidden}
+  .bar{flex:none;height:54px;display:flex;align-items:center;gap:8px;padding:0 12px;background:var(--surface);border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top,0)}
+  .b{display:inline-flex;align-items:center;gap:7px;height:38px;padding:0 14px;border-radius:10px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--text);font:inherit;font-weight:600;font-size:14px;cursor:pointer;text-decoration:none;transition:.15s;white-space:nowrap}
+  .b:hover{background:rgba(255,255,255,.1);border-color:#3a4256}
+  .b svg{width:16px;height:16px;fill:currentColor;flex:none}
+  .b.home{background:var(--accent);border-color:var(--accent);color:#fff}
+  .b.home:hover{background:#6a9dff}
+  .title{flex:1;text-align:center;font-family:Sora,Inter,sans-serif;font-weight:700;font-size:16px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:0 6px}
+  .title small{display:block;font-family:Inter,sans-serif;font-weight:500;font-size:11.5px;color:var(--muted);letter-spacing:1px;text-transform:uppercase}
+  .stage{flex:1;position:relative;background:#000}
+  iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:block}
+  .loading{position:absolute;inset:0;display:grid;place-items:center;color:var(--muted);font-size:14px;pointer-events:none;transition:opacity .3s}
+  .loading.off{opacity:0}
+  .loading span{width:34px;height:34px;border:3px solid var(--line);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;display:block;margin:0 auto 12px}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @media (max-width:520px){.b .lbl{display:none}.b{padding:0 11px}}
+</style>
+</head>
+<body>
+<div class="bar">
+  <button class="b" id="back" type="button" title="Back"><svg viewBox="0 0 24 24"><path d="M19 11H7.8l4.6-4.6L11 5l-7 7 7 7 1.4-1.4L7.8 13H19z"/></svg><span class="lbl">Back</span></button>
+  <a class="b home" id="home" href="./" title="Home"><svg viewBox="0 0 24 24"><path d="M12 3 2 12h3v8h6v-6h2v6h6v-8h3z"/></svg><span class="lbl">Home</span></a>
+  <div class="title" id="title">Loading…<small>Elisha Games</small></div>
+  <a class="b" id="newtab" href="#" target="_blank" rel="noopener" title="Open in new tab"><svg viewBox="0 0 24 24"><path d="M14 3h7v7h-2V6.4l-8.3 8.3-1.4-1.4L17.6 5H14zM5 5h6v2H7v10h10v-4h2v6H5z"/></svg><span class="lbl">New tab</span></a>
+  <button class="b" id="fs" type="button" title="Fullscreen"><svg viewBox="0 0 24 24"><path d="M4 4h6v2H6v4H4zm10 0h6v6h-2V6h-4zM4 14h2v4h4v2H4zm14 0h2v6h-6v-2h4z"/></svg><span class="lbl">Fullscreen</span></button>
+</div>
+<div class="stage" id="stage">
+  <div class="loading" id="loading"><div><span></span>Loading game…</div></div>
+</div>
+<script>
+const GAMES={
+  'car-race':     {name:'Car Race',          url:'https://elishagames1-cell.github.io/car-race/'},
+  'super-goal-3d':{name:'Super Goal 3D',     url:'https://elishagames1-cell.github.io/kadur-totach/'},
+  'fifa-soccer':  {name:'FIFA Style Soccer', url:'https://elishagames1-cell.github.io/fifa-style-soccer/'},
+  'flappy-bird':  {name:'Flappy Bird',       url:'https://elishagames1-cell.github.io/flappy-bird/'},
+};
+const slug=new URLSearchParams(location.search).get('g');
+const g=GAMES[slug];
+if(!g){location.replace('./');}
+else{
+  document.title=g.name+' · Elisha Games';
+  document.getElementById('title').innerHTML=g.name+'<small>Elisha Games</small>';
+  document.getElementById('newtab').href=g.url;
+  const f=document.createElement('iframe');
+  f.src=g.url;f.allow='fullscreen; autoplay; gamepad';f.setAttribute('allowfullscreen','');
+  f.addEventListener('load',()=>document.getElementById('loading').classList.add('off'));
+  document.getElementById('stage').prepend(f);
+  document.getElementById('fs').onclick=()=>{
+    const el=document.getElementById('stage');
+    if(document.fullscreenElement)document.exitFullscreen();
+    else(el.requestFullscreen||el.webkitRequestFullscreen).call(el);
+  };
+  document.getElementById('back').onclick=()=>{
+    if(history.length>1&&document.referrer&&new URL(document.referrer).origin===location.origin)history.back();
+    else location.href='./';
+  };
+}
+</script>
+</body>
+</html>
